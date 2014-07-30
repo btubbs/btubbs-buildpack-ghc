@@ -256,14 +256,19 @@ cp -R $WORKING_HOME/.cabal-sandbox $CACHE_DIR
 
 echo "-----> Making GHC binaries available to Heroku command line"
 mkdir -p $BUILD_DIR/vendor
+# Include ghc-libs because of libgmp
 mv $WORKING_HOME/vendor/ghc-libs $BUILD_DIR/vendor
-mv $WORKING_HOME/vendor/ghc-utils $BUILD_DIR/vendor
-mv $WORKING_HOME/vendor/ghc-includes $BUILD_DIR/vendor
-mv $WORKING_HOME/vendor/ghc-$GHC_VER $BUILD_DIR/vendor
-mv $WORKING_HOME/vendor/cabal-install-$CABAL_VER $BUILD_DIR/vendor
+# Do not include anything else to reduce bloat
+# mv $WORKING_HOME/vendor/ghc-utils $BUILD_DIR/vendor
+# mv $WORKING_HOME/vendor/ghc-includes $BUILD_DIR/vendor
+# mv $WORKING_HOME/vendor/ghc-$GHC_VER $BUILD_DIR/vendor
+# mv $WORKING_HOME/vendor/cabal-install-$CABAL_VER $BUILD_DIR/vendor
 
-echo "-----> Making cabal config available to Heroku command line"
-mv $WORKING_HOME/.cabal $BUILD_DIR
+# No need for .cabal because we don't include `cabal`
+# echo "-----> Making cabal config available to Heroku command line"
+# mv $WORKING_HOME/.cabal $BUILD_DIR
 
 echo "-----> Making cabal sandbox available to Heroku command line"
+# Remove static libraries
+find $WORKING_HOME/.cabal-sandbox/lib/ -name "*.a" -delete
 cp -R $WORKING_HOME/.cabal-sandbox $BUILD_DIR
